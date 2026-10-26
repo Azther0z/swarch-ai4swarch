@@ -33,10 +33,10 @@ requirement: <paste R-12 here>
 
 | Criterion | Run a | Run b |
 |---|---|---|
-| Uses the scenario's numbers (latency, peak, MailFast limits)? | | |
-| Options considered (list them) | | |
-| Handles "exactly once" loyalty points and MailFast's rate limit? How? | | |
-| Anything invented (a number, tool or fact not in the scenario)? | | |
+| Uses the scenario's numbers (latency, peak, MailFast limits)? | Mentioned in "Context and problem" section, but some numbers are not appeared in "Decision drivers" section e.g. MailFast p95 1.5s| Mentioned in "Context and problem" section, but some numbers are not appeared in "Decision drivers" section e.g. MailFast p95 1.5s and p99 8s|
+| Options considered (list them) | Synchronous gRPC fan-out, RabbitMQ event with independent consumers, Kafka event stream with independent consumers | Synchronous gRPC, RabbitMQ with independent action queues, Self-hosted Kafka|
+| Handles "exactly once" loyalty points and MailFast's rate limit? How? | Make the loyalty consumer idempotent using the stable order identifier and a durable uniqueness check in its points ledger. Rate-limit the email consumer to MailFast’s 50 emails/s and monitor the backlog| The loyalty consumer must use the order ID as an idempotency key and atomically record that key with the points award. Configure the email consumer to respect MailFast’s 50 emails/s limit and retry transient failures with backoff. |
+| Anything invented (a number, tool or fact not in the scenario)? |None |None |
 
 ## Take ownership: your final ADR
 
@@ -49,6 +49,5 @@ You will defend this ADR in front of a review board in Part B, so make sure you 
 
 | # | What you changed from the AI's draft | Why |
 |---|---|---|
-| 1 | | |
-| 2 | | |
-| 3 | | |
+| 1 |Explicitly include more number constraints in decision drivers | To ensure consistent context in the document|
+| 2 | Remix the list of open questions| Drop trivial questions, drop out-of-scope questions, |
